@@ -29,20 +29,5 @@ pipeline {
                 }
             }
         }
-        
-        stage('Run Parallel Branches') {
-            steps {
-                parallel(
-                    a: {
-                        echo "Running Maven package..."
-                        sh "mvn package"
-                    },
-                    b: {
-                        echo "Running Maven test..."
-                        sh "mvn test"
-                    }
-                )
-            }
-        }
     }
 }
