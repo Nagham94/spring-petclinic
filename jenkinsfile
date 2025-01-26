@@ -1,32 +1,42 @@
 pipeline {
     agent any
-    
+
     tools {
         maven 'maven399'
     }
-    
+
+    parameters {
+        choice(
+            name: 'MAVEN_COMMAND',
+            choices: ['install', 'package', 'clean', 'test'],
+            description: 'Choose a Maven command to run'
+        )
+    }
+
     stages {
-        stage('clone repo'){
-            steps{
-                git branch: 'main', poll: false, url: 'https://github.com/spring-projects/spring-petclinic.git'
-            }
-        }
-        stage('install'){
-            steps{
-                   sh "mvn install"
-            }
-        }
-        stage('run-parallel-branches') {
+        
+        stage('Execute Maven Command') {
             steps {
-             parallel(
-                a: {
-                   sh "mvn package"
-                },
-                b: {
-                   sh "mvn test"
+                script {
+                    echo "Selected Maven Command: ${params.MAVEN_COMMAND}"
+                    sh "mvn ${params.MAVEN_COMMAND}"
                 }
-             )
             }
-}
+        }
+        
+        stage('Run Parallel Branches') {
+            steps {
+                parallel(
+                    a: {
+                        echo "Running Maven package..."
+                        sh "mvn package"
+                    },
+                    b: {
+                        echo "Running Maven test..."
+                        sh "mvn test"
+                    }
+                )
+            }
+        }
     }
 }
