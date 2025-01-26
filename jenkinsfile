@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'maven399'
+    }
+    
+    stages {
+        stage('clone repo'){
+            steps{
+                git branch: 'main', poll: false, url: 'https://github.com/spring-projects/spring-petclinic.git'
+            }
+        }
+        stage('install'){
+            steps{
+                   sh "mvn install"
+            }
+        }
+        stage('run-parallel-branches') {
+            steps {
+             parallel(
+                a: {
+                   sh "mvn package"
+                },
+                b: {
+                   sh "mvn test"
+                }
+             )
+            }
+}
+    }
+}
