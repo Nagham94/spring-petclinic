@@ -29,5 +29,13 @@ pipeline {
                 }
             }
         }
+
+      stage('Deploy and Execute on Remote Server') {
+            steps {
+                script {
+sshPublisher(publishers: [sshPublisherDesc(configName: 'RemoteServer', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'python3 myscript.py', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'myscript.py')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                }
+            }
+        }
     }
 }
